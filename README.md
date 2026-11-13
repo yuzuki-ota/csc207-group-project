@@ -58,3 +58,9 @@ The lookup uses the [Free Dictionary API](https://dictionaryapi.dev/). A GET req
 ## Implementation order
 
 First, agree on the deck file format using one sample card. Yuzuki can then build the lookup and save flow while Pranav builds the review flow using that sample deck. To check that the two flows work together, save two words, restart the app, mark one *Again*, and confirm it appears first in the next review.
+
+## Current progress
+
+`Flashcard`, deck insertion and duplicate checks, and the lookup interactor are implemented. The lookup screen is a layout only; its buttons are disabled. The controller, presenter, dictionary API connection, and file storage are still to do. `ReviewSession` and review ordering are also pending.
+
+Open `pom.xml` as a Maven project and run `app.Main` to view the layout. Run `mvn test` to check the entities and lookup interactor.
