@@ -1,5 +1,7 @@
 package entity;
 
+import java.util.Arrays;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,5 +42,26 @@ class DeckTest {
         deck.addCard(new Flashcard("hello", "interjection", "A greeting."));
         deck.getCards().clear();
         assertEquals(1, deck.getCards().size());
+    }
+
+    @Test
+    void reviewPutsAgainCardsFirstWithoutChangingTheDeckOrder() {
+        final Deck deck = new Deck();
+        final Flashcard first = new Flashcard("book", "noun", "A written work.");
+        final Flashcard second = new Flashcard("read", "verb", "Look at written words.");
+        final Flashcard third = new Flashcard("page", "noun", "One side of a sheet.");
+        final Flashcard fourth = new Flashcard("write", "verb", "Put words on paper.");
+        first.recordRating(Flashcard.GOT_IT);
+        second.recordRating(Flashcard.AGAIN);
+        fourth.recordRating(Flashcard.AGAIN);
+        deck.addCard(first);
+        deck.addCard(second);
+        deck.addCard(third);
+        deck.addCard(fourth);
+
+        assertEquals(Arrays.asList(second, fourth, first, third), deck.cardsForReview());
+        assertEquals(Arrays.asList(first, second, third, fourth), deck.getCards());
+        deck.cardsForReview().clear();
+        assertEquals(4, deck.getCards().size());
     }
 }

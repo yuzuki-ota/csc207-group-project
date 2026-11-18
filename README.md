@@ -61,6 +61,6 @@ First, agree on the deck file format using one sample card. Yuzuki can then buil
 
 ## Current progress
 
-`Flashcard`, deck insertion and duplicate checks, and the lookup interactor are implemented. The lookup screen is a layout only; its buttons are disabled. The controller, presenter, dictionary API connection, and file storage are still to do. `ReviewSession` and review ordering are also pending.
+`Flashcard`, deck insertion and duplicate checks, review ordering, `ReviewSession`, and the lookup interactor are implemented. The lookup screen is a layout only; its buttons are disabled. The controller, presenter, dictionary API connection, and file storage are still to do. The review UI and interactor are not included yet.
 
 Open `pom.xml` as a Maven project and run `app.Main` to view the layout. Run `mvn test` to check the entities and lookup interactor.

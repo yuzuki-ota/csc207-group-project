@@ -20,4 +20,18 @@ public class Deck {
         return new ArrayList<>(cards);
     }
 
+    public List<Flashcard> cardsForReview() {
+        final List<Flashcard> orderedCards = new ArrayList<>();
+        for (Flashcard card : cards) {
+            if (Flashcard.AGAIN.equals(card.getLastRating())) {
+                orderedCards.add(card);
+            }
+        }
+        for (Flashcard card : cards) {
+            if (!Flashcard.AGAIN.equals(card.getLastRating())) {
+                orderedCards.add(card);
+            }
+        }
+        return orderedCards;
+    }
 }
