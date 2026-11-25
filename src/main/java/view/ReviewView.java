@@ -47,6 +47,7 @@ public class ReviewView extends JPanel implements PropertyChangeListener {
         cardPanel.add(partOfSpeechLabel);
 
         definitionArea.setEditable(false);
+        definitionArea.setFocusable(false);
         definitionArea.setMargin(new Insets(5, 5, 5, 5));
         definitionArea.setLineWrap(true);
         definitionArea.setWrapStyleWord(true);
