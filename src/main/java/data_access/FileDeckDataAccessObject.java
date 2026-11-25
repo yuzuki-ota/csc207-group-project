@@ -52,19 +52,17 @@ public class FileDeckDataAccessObject implements ReviewDataAccessInterface {
 
     private Deck readDeck() throws IOException {
         final Deck savedDeck = new Deck();
-        if (!Files.exists(file)) {
-            return savedDeck;
-        }
-
-        final String text = new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
-        try {
-            final JSONArray cards = new JSONObject(text).getJSONArray(CARDS);
-            for (int i = 0; i < cards.length(); i++) {
-                savedDeck.addCard(toCard(cards.getJSONObject(i)));
+        if (Files.exists(file)) {
+            final String text = new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
+            try {
+                final JSONArray cards = new JSONObject(text).getJSONArray(CARDS);
+                for (int i = 0; i < cards.length(); i++) {
+                    savedDeck.addCard(toCard(cards.getJSONObject(i)));
+                }
             }
-        }
-        catch (JSONException | IllegalArgumentException exception) {
-            throw new IOException("The deck file is not in the expected format.", exception);
+            catch (JSONException | IllegalArgumentException exception) {
+                throw new IOException("The deck file is not in the expected format.", exception);
+            }
         }
         return savedDeck;
     }
