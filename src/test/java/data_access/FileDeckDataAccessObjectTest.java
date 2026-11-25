@@ -48,7 +48,7 @@ class FileDeckDataAccessObjectTest {
     }
 
     @Test
-    void cardWithoutARatingIsLoadedAsNew() throws IOException {
+    void cardWithoutRatingIsLoadedAsNew() throws IOException {
         writeDeckFile("{\"cards\": [{\"word\": \"hello\", \"partOfSpeech\": \"interjection\","
                 + " \"definition\": \"A greeting.\"}]}");
         final Deck deck = openStorage().getDeck();
@@ -83,7 +83,7 @@ class FileDeckDataAccessObjectTest {
     }
 
     @Test
-    void fileThatIsNotADeckCannotBeOpened() throws IOException {
+    void fileThatIsNotJsonCannotBeOpened() throws IOException {
         writeDeckFile("not a deck");
         final FileDeckDataAccessObject storage = openStorage();
         assertThrows(IOException.class, storage::getDeck);
