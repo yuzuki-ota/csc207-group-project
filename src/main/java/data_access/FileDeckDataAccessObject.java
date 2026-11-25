@@ -1,17 +1,18 @@
 package data_access;
 
-import entity.Deck;
-import entity.Flashcard;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import use_case.review.ReviewDataAccessInterface;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import entity.Deck;
+import entity.Flashcard;
+import use_case.review.ReviewDataAccessInterface;
 
 public class FileDeckDataAccessObject implements ReviewDataAccessInterface {
     private static final String CARDS = "cards";

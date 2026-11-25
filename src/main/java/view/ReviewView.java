@@ -1,8 +1,11 @@
 package view;
 
-import interface_adapter.review.ReviewController;
-import interface_adapter.review.ReviewState;
-import interface_adapter.review.ReviewViewModel;
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -10,12 +13,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
-import java.awt.BorderLayout;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+
+import interface_adapter.review.ReviewController;
+import interface_adapter.review.ReviewState;
+import interface_adapter.review.ReviewViewModel;
 
 public class ReviewView extends JPanel implements PropertyChangeListener {
     private final ReviewViewModel reviewViewModel;

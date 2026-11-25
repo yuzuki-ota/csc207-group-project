@@ -1,9 +1,9 @@
 package use_case.review;
 
+import java.io.IOException;
+
 import entity.Deck;
 import entity.Flashcard;
-
-import java.io.IOException;
 
 public interface ReviewDataAccessInterface {
     // Return an empty deck if nothing has been saved yet.

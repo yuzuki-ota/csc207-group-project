@@ -1,5 +1,9 @@
 package app;
 
+import javax.swing.JFrame;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
+
 import data_access.FileDeckDataAccessObject;
 import interface_adapter.review.ReviewController;
 import interface_adapter.review.ReviewPresenter;
@@ -10,10 +14,6 @@ import use_case.review.ReviewInteractor;
 import use_case.review.ReviewOutputBoundary;
 import view.LookupView;
 import view.ReviewView;
-
-import javax.swing.JFrame;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
 
 public class Main {
     public static void main(String[] args) {

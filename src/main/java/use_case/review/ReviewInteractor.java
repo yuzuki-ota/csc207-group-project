@@ -1,11 +1,11 @@
 package use_case.review;
 
+import java.io.IOException;
+import java.util.List;
+
 import entity.Deck;
 import entity.Flashcard;
 import entity.ReviewSession;
-
-import java.io.IOException;
-import java.util.List;
 
 public class ReviewInteractor implements ReviewInputBoundary {
     private final ReviewDataAccessInterface deckStorage;
