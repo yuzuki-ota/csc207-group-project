@@ -59,8 +59,27 @@ The lookup uses the [Free Dictionary API](https://dictionaryapi.dev/). A GET req
 
 First, agree on the deck file format using one sample card. Yuzuki can then build the lookup and save flow while Pranav builds the review flow using that sample deck. To check that the two flows work together, save two words, restart the app, mark one *Again*, and confirm it appears first in the next review.
 
+## Deck file
+
+The deck is saved as `deck.json` in the folder the app is run from. Cards are kept in the order they were added, and `lastRating` is `New`, `Again`, or `Got it`.
+
+```json
+{
+  "cards": [
+    {
+      "word": "hello",
+      "partOfSpeech": "interjection",
+      "definition": "A greeting said when meeting someone.",
+      "lastRating": "New"
+    }
+  ]
+}
+```
+
 ## Current progress
 
-`Flashcard`, deck insertion and duplicate checks, review ordering, `ReviewSession`, and the lookup interactor are implemented. The lookup screen is a layout only; its buttons are disabled. The controller, presenter, dictionary API connection, and file storage are still to do. The review UI and interactor are not included yet.
+`Flashcard`, deck insertion and duplicate checks, review ordering, `ReviewSession`, and the lookup interactor are implemented. Reviewing saved words works from the Review tab: it loads `deck.json`, shows one card at a time, saves each rating before moving on, and shows the totals when the deck is finished or the review is ended early.
 
-Open `pom.xml` as a Maven project and run `app.Main` to view the layout. Run `mvn test` to check the entities and lookup interactor.
+The lookup screen is still a layout only; its buttons are disabled. Its controller, presenter, dictionary API connection, and saving new cards to the deck file are still to do. Until then, copy the sample above into `deck.json` to try a review.
+
+Open `pom.xml` as a Maven project and run `app.Main`. Run `mvn test` to check the entities, both interactors, the review presenter, and the deck file.
