@@ -14,10 +14,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class FileDeckDataAccessObjectTest {
     private static final String TWO_CARDS = "{\"cards\": ["
-            + "{\"word\": \"book\", \"partOfSpeech\": \"noun\", \"definition\": \"A written work.\","
-            + " \"lastRating\": \"Got it\"},"
-            + "{\"word\": \"read\", \"partOfSpeech\": \"verb\", \"definition\": \"Look at written words.\","
-            + " \"lastRating\": \"New\"}"
+            + "{\"word\": \"book\", \"partOfSpeech\": \"noun\","
+            + " \"definition\": \"A written work.\", \"lastRating\": \"Got it\"},"
+            + "{\"word\": \"read\", \"partOfSpeech\": \"verb\","
+            + " \"definition\": \"Look at written words.\", \"lastRating\": \"New\"}"
             + "]}";
 
     @TempDir
@@ -25,14 +25,13 @@ class FileDeckDataAccessObjectTest {
 
     @Test
     void missingFileGivesAnEmptyDeck() throws IOException {
-        final FileDeckDataAccessObject storage = new FileDeckDataAccessObject(deckPath().toString());
-        assertTrue(storage.getDeck().getCards().isEmpty());
+        assertTrue(openStorage().getDeck().getCards().isEmpty());
     }
 
     @Test
     void cardsAreLoadedInOrderWithTheirRatings() throws IOException {
         writeDeckFile(TWO_CARDS);
-        final Deck deck = new FileDeckDataAccessObject(deckPath().toString()).getDeck();
+        final Deck deck = openStorage().getDeck();
 
         assertEquals(2, deck.getCards().size());
         final Flashcard book = deck.getCards().get(0);
@@ -48,7 +47,7 @@ class FileDeckDataAccessObjectTest {
     void cardWithoutARatingIsLoadedAsNew() throws IOException {
         writeDeckFile("{\"cards\": [{\"word\": \"hello\", \"partOfSpeech\": \"interjection\","
                 + " \"definition\": \"A greeting.\"}]}");
-        final Deck deck = new FileDeckDataAccessObject(deckPath().toString()).getDeck();
+        final Deck deck = openStorage().getDeck();
 
         assertEquals(1, deck.getCards().size());
         assertEquals(Flashcard.NEW, deck.getCards().get(0).getLastRating());
@@ -57,20 +56,20 @@ class FileDeckDataAccessObjectTest {
     @Test
     void deckIsReadOnceAndShared() throws IOException {
         writeDeckFile(TWO_CARDS);
-        final FileDeckDataAccessObject storage = new FileDeckDataAccessObject(deckPath().toString());
+        final FileDeckDataAccessObject storage = openStorage();
         assertSame(storage.getDeck(), storage.getDeck());
     }
 
     @Test
     void savedRatingIsThereAfterReopeningTheFile() throws IOException {
         writeDeckFile(TWO_CARDS);
-        final FileDeckDataAccessObject storage = new FileDeckDataAccessObject(deckPath().toString());
+        final FileDeckDataAccessObject storage = openStorage();
         final Flashcard read = storage.getDeck().getCards().get(1);
 
         storage.saveRating(read, Flashcard.AGAIN);
 
         assertEquals(Flashcard.NEW, read.getLastRating());
-        final Deck reopened = new FileDeckDataAccessObject(deckPath().toString()).getDeck();
+        final Deck reopened = openStorage().getDeck();
         assertEquals(2, reopened.getCards().size());
         assertEquals("book", reopened.getCards().get(0).getWord());
         assertEquals(Flashcard.GOT_IT, reopened.getCards().get(0).getLastRating());
@@ -82,7 +81,7 @@ class FileDeckDataAccessObjectTest {
     @Test
     void fileThatIsNotADeckCannotBeOpened() throws IOException {
         writeDeckFile("not a deck");
-        final FileDeckDataAccessObject storage = new FileDeckDataAccessObject(deckPath().toString());
+        final FileDeckDataAccessObject storage = openStorage();
         assertThrows(IOException.class, storage::getDeck);
     }
 
@@ -90,7 +89,7 @@ class FileDeckDataAccessObjectTest {
     void unknownRatingCannotBeOpened() throws IOException {
         writeDeckFile("{\"cards\": [{\"word\": \"book\", \"partOfSpeech\": \"noun\","
                 + " \"definition\": \"A written work.\", \"lastRating\": \"Easy\"}]}");
-        final FileDeckDataAccessObject storage = new FileDeckDataAccessObject(deckPath().toString());
+        final FileDeckDataAccessObject storage = openStorage();
         assertThrows(IOException.class, storage::getDeck);
     }
 
@@ -100,6 +99,10 @@ class FileDeckDataAccessObjectTest {
         final FileDeckDataAccessObject storage = new FileDeckDataAccessObject(path);
         final Flashcard card = new Flashcard("book", "noun", "A written work.");
         assertThrows(IOException.class, () -> storage.saveRating(card, Flashcard.AGAIN));
+    }
+
+    private FileDeckDataAccessObject openStorage() {
+        return new FileDeckDataAccessObject(deckPath().toString());
     }
 
     private Path deckPath() {

@@ -61,7 +61,8 @@ class ReviewInteractorTest {
         interactor.rateCard(new ReviewInputData(true));
 
         assertEquals(Arrays.asList("read", "book", "page"), presenter.words);
-        assertEquals(Arrays.asList("read Got it", "book Again", "page Got it"), storage.savedRatings);
+        assertEquals(Arrays.asList("read Got it", "book Again", "page Got it"),
+                storage.savedRatings);
         assertEquals(2, presenter.summary.getGotItCount());
         assertEquals(1, presenter.summary.getAgainCount());
         assertNull(presenter.error);
