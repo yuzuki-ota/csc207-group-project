@@ -1,16 +1,20 @@
 package data_access;
 
-import entity.Deck;
-import entity.Flashcard;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import entity.Deck;
+import entity.Flashcard;
 
 class FileDeckDataAccessObjectTest {
     private static final String TWO_CARDS = "{\"cards\": ["
@@ -44,7 +48,7 @@ class FileDeckDataAccessObjectTest {
     }
 
     @Test
-    void cardWithoutARatingIsLoadedAsNew() throws IOException {
+    void cardWithoutRatingIsLoadedAsNew() throws IOException {
         writeDeckFile("{\"cards\": [{\"word\": \"hello\", \"partOfSpeech\": \"interjection\","
                 + " \"definition\": \"A greeting.\"}]}");
         final Deck deck = openStorage().getDeck();
@@ -79,7 +83,7 @@ class FileDeckDataAccessObjectTest {
     }
 
     @Test
-    void fileThatIsNotADeckCannotBeOpened() throws IOException {
+    void fileThatIsNotJsonCannotBeOpened() throws IOException {
         writeDeckFile("not a deck");
         final FileDeckDataAccessObject storage = openStorage();
         assertThrows(IOException.class, storage::getDeck);

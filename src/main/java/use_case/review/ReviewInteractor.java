@@ -1,11 +1,10 @@
 package use_case.review;
 
-import entity.Deck;
-import entity.Flashcard;
-import entity.ReviewSession;
-
 import java.io.IOException;
 import java.util.List;
+
+import entity.Flashcard;
+import entity.ReviewSession;
 
 public class ReviewInteractor implements ReviewInputBoundary {
     private final ReviewDataAccessInterface deckStorage;
@@ -19,55 +18,32 @@ public class ReviewInteractor implements ReviewInputBoundary {
 
     @Override
     public void startReview() {
-        final Deck deck;
         try {
-            deck = deckStorage.getDeck();
+            final List<Flashcard> cards = deckStorage.getDeck().cardsForReview();
+            if (cards.isEmpty()) {
+                presenter.prepareFailView("Your deck is empty. Look up and save a word first.");
+            }
+            else {
+                session = new ReviewSession(cards);
+                showCurrentCard();
+            }
         }
         catch (IOException exception) {
             presenter.prepareFailView("Could not open the deck. Please try again.");
-            return;
-        }
-
-        final List<Flashcard> cards = deck.cardsForReview();
-        if (cards.isEmpty()) {
-            presenter.prepareFailView("Your deck is empty. Look up and save a word first.");
-        }
-        else {
-            session = new ReviewSession(cards);
-            showCurrentCard();
         }
     }
 
     @Override
     public void rateCard(ReviewInputData inputData) {
-        if (session == null) {
-            return;
-        }
-
-        final String rating;
-        if (inputData.isGotIt()) {
-            rating = Flashcard.GOT_IT;
-        }
-        else {
-            rating = Flashcard.AGAIN;
-        }
-
-        final Flashcard card = session.currentCard();
-        try {
-            deckStorage.saveRating(card, rating);
-        }
-        catch (IOException exception) {
-            presenter.prepareFailView("Could not save the rating. Please try again.");
-            return;
-        }
-
-        card.recordRating(rating);
-        session.advance(rating);
-        if (session.isFinished()) {
-            showSummary();
-        }
-        else {
-            showCurrentCard();
+        if (session != null) {
+            final String rating;
+            if (inputData.isGotIt()) {
+                rating = Flashcard.GOT_IT;
+            }
+            else {
+                rating = Flashcard.AGAIN;
+            }
+            saveAndMoveOn(rating);
         }
     }
 
@@ -75,6 +51,24 @@ public class ReviewInteractor implements ReviewInputBoundary {
     public void endReview() {
         if (session != null) {
             showSummary();
+        }
+    }
+
+    private void saveAndMoveOn(String rating) {
+        final Flashcard card = session.currentCard();
+        try {
+            deckStorage.saveRating(card, rating);
+            card.recordRating(rating);
+            session.advance(rating);
+            if (session.isFinished()) {
+                showSummary();
+            }
+            else {
+                showCurrentCard();
+            }
+        }
+        catch (IOException exception) {
+            presenter.prepareFailView("Could not save the rating. Please try again.");
         }
     }
 

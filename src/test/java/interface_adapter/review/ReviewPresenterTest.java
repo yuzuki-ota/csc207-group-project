@@ -1,14 +1,17 @@
 package interface_adapter.review;
 
-import org.junit.jupiter.api.Test;
-import use_case.review.ReviewOutputData;
-import use_case.review.ReviewSummaryOutputData;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+
+import use_case.review.ReviewOutputData;
+import use_case.review.ReviewSummaryOutputData;
 
 class ReviewPresenterTest {
     @Test

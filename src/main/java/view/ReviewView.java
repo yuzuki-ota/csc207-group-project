@@ -1,15 +1,5 @@
 package view;
 
-import interface_adapter.review.ReviewController;
-import interface_adapter.review.ReviewState;
-import interface_adapter.review.ReviewViewModel;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -17,7 +7,21 @@ import java.awt.Insets;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
+
+import interface_adapter.review.ReviewController;
+import interface_adapter.review.ReviewState;
+import interface_adapter.review.ReviewViewModel;
+
 public class ReviewView extends JPanel implements PropertyChangeListener {
+    private static final float WORD_FONT_SIZE = 20f;
+    private static final int MARGIN = 5;
+
     private final ReviewViewModel reviewViewModel;
 
     private final JButton startButton = new JButton("Start review");
@@ -33,33 +37,21 @@ public class ReviewView extends JPanel implements PropertyChangeListener {
     public ReviewView(ReviewViewModel reviewViewModel, ReviewController reviewController) {
         this.reviewViewModel = reviewViewModel;
         reviewViewModel.addPropertyChangeListener(this);
+        addListeners(reviewController);
+
         setLayout(new BorderLayout());
+        add(createCardPanel(), BorderLayout.NORTH);
+        add(createDefinitionPane(), BorderLayout.CENTER);
+        add(createBottomPanel(), BorderLayout.SOUTH);
+        updateView();
+    }
 
-        final JPanel sessionPanel = new JPanel();
-        sessionPanel.add(startButton);
-        sessionPanel.add(endButton);
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        updateView();
+    }
 
-        wordLabel.setFont(wordLabel.getFont().deriveFont(Font.BOLD, 20f));
-        // Grid rows all get the same height, so the layout doesn't jump when a label is empty.
-        final JPanel cardPanel = new JPanel(new GridLayout(0, 1));
-        cardPanel.add(sessionPanel);
-        cardPanel.add(wordLabel);
-        cardPanel.add(partOfSpeechLabel);
-
-        definitionArea.setEditable(false);
-        definitionArea.setFocusable(false);
-        definitionArea.setMargin(new Insets(5, 5, 5, 5));
-        definitionArea.setLineWrap(true);
-        definitionArea.setWrapStyleWord(true);
-
-        final JPanel ratingPanel = new JPanel();
-        ratingPanel.add(showButton);
-        ratingPanel.add(againButton);
-        ratingPanel.add(gotItButton);
-        final JPanel bottomPanel = new JPanel(new GridLayout(0, 1));
-        bottomPanel.add(ratingPanel);
-        bottomPanel.add(messageLabel);
-
+    private void addListeners(ReviewController reviewController) {
         startButton.addActionListener(event -> reviewController.startReview());
         endButton.addActionListener(event -> reviewController.endReview());
         showButton.addActionListener(event -> {
@@ -68,16 +60,40 @@ public class ReviewView extends JPanel implements PropertyChangeListener {
         });
         againButton.addActionListener(event -> reviewController.rateCard(false));
         gotItButton.addActionListener(event -> reviewController.rateCard(true));
-
-        add(cardPanel, BorderLayout.NORTH);
-        add(new JScrollPane(definitionArea), BorderLayout.CENTER);
-        add(bottomPanel, BorderLayout.SOUTH);
-        updateView();
     }
 
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        updateView();
+    private JPanel createCardPanel() {
+        final JPanel sessionPanel = new JPanel();
+        sessionPanel.add(startButton);
+        sessionPanel.add(endButton);
+
+        wordLabel.setFont(wordLabel.getFont().deriveFont(Font.BOLD, WORD_FONT_SIZE));
+        // Grid rows all get the same height, so the layout doesn't jump when a label is empty.
+        final JPanel cardPanel = new JPanel(new GridLayout(0, 1));
+        cardPanel.add(sessionPanel);
+        cardPanel.add(wordLabel);
+        cardPanel.add(partOfSpeechLabel);
+        return cardPanel;
+    }
+
+    private JScrollPane createDefinitionPane() {
+        definitionArea.setEditable(false);
+        definitionArea.setFocusable(false);
+        definitionArea.setMargin(new Insets(MARGIN, MARGIN, MARGIN, MARGIN));
+        definitionArea.setLineWrap(true);
+        definitionArea.setWrapStyleWord(true);
+        return new JScrollPane(definitionArea);
+    }
+
+    private JPanel createBottomPanel() {
+        final JPanel ratingPanel = new JPanel();
+        ratingPanel.add(showButton);
+        ratingPanel.add(againButton);
+        ratingPanel.add(gotItButton);
+        final JPanel bottomPanel = new JPanel(new GridLayout(0, 1));
+        bottomPanel.add(ratingPanel);
+        bottomPanel.add(messageLabel);
+        return bottomPanel;
     }
 
     private void updateView() {

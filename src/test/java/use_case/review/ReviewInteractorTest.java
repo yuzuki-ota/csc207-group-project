@@ -1,19 +1,22 @@
 package use_case.review;
 
-import entity.Deck;
-import entity.Flashcard;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+
+import entity.Deck;
+import entity.Flashcard;
 
 class ReviewInteractorTest {
     @Test
-    void emptyDeckAsksForAWordFirst() {
+    void emptyDeckAsksToSaveWordsFirst() {
         final DeckStorageStub storage = new DeckStorageStub();
         final TestPresenter presenter = new TestPresenter();
 
@@ -87,7 +90,7 @@ class ReviewInteractorTest {
     }
 
     @Test
-    void failedSaveStaysOnTheCardUntilARetryWorks() {
+    void failedSaveStaysOnTheCardUntilRetryWorks() {
         final DeckStorageStub storage = new DeckStorageStub();
         final Flashcard book = new Flashcard("book", "noun", "A written work.");
         final Flashcard read = new Flashcard("read", "verb", "Look at written words.");
@@ -152,7 +155,7 @@ class ReviewInteractorTest {
     }
 
     @Test
-    void ratingOrEndingWithoutAReviewDoesNothing() {
+    void ratingOrEndingBeforeStartingDoesNothing() {
         final DeckStorageStub storage = new DeckStorageStub();
         storage.deck.addCard(new Flashcard("book", "noun", "A written work."));
         final TestPresenter presenter = new TestPresenter();
@@ -167,7 +170,7 @@ class ReviewInteractorTest {
         assertNull(presenter.error);
     }
 
-    private static class DeckStorageStub implements ReviewDataAccessInterface {
+    private static final class DeckStorageStub implements ReviewDataAccessInterface {
         private final Deck deck = new Deck();
         private final List<String> savedRatings = new ArrayList<>();
         private String ratingBeforeSave;
@@ -192,26 +195,26 @@ class ReviewInteractorTest {
         }
     }
 
-    private static class TestPresenter implements ReviewOutputBoundary {
+    private static final class TestPresenter implements ReviewOutputBoundary {
         private final List<String> words = new ArrayList<>();
         private ReviewOutputData card;
         private ReviewSummaryOutputData summary;
         private String error;
 
         @Override
-        public void prepareCardView(ReviewOutputData card) {
-            this.card = card;
-            words.add(card.getWord());
+        public void prepareCardView(ReviewOutputData cardData) {
+            card = cardData;
+            words.add(cardData.getWord());
         }
 
         @Override
-        public void prepareSummaryView(ReviewSummaryOutputData summary) {
-            this.summary = summary;
+        public void prepareSummaryView(ReviewSummaryOutputData totals) {
+            summary = totals;
         }
 
         @Override
-        public void prepareFailView(String error) {
-            this.error = error;
+        public void prepareFailView(String message) {
+            error = message;
         }
     }
 }
