@@ -13,13 +13,26 @@ public class ReviewSession {
         this.orderedCards = new ArrayList<>(orderedCards);
     }
 
+    /**
+     * Gets the next card waiting for a rating.
+     *
+     * @return the current card, or null when the session is finished
+     */
     public Flashcard currentCard() {
-        if (isFinished()) {
-            return null;
+        Flashcard current = null;
+        if (!isFinished()) {
+            current = orderedCards.get(currentIndex);
         }
-        return orderedCards.get(currentIndex);
+        return current;
     }
 
+    /**
+     * Counts the rating and advances to the next card in this session.
+     *
+     * @param rating Again or Got it
+     * @throws IllegalStateException if the session has finished
+     * @throws IllegalArgumentException if the rating is not a review choice
+     */
     public void advance(String rating) {
         if (isFinished()) {
             throw new IllegalStateException("The review session has finished.");

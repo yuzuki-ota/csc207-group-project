@@ -1,12 +1,17 @@
 package entity;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class ReviewSessionTest {
     @Test
@@ -30,7 +35,7 @@ class ReviewSessionTest {
     }
 
     @Test
-    void emptyDeckStartsWithAFinishedSession() {
+    void sessionForEmptyDeckStartsFinished() {
         final ReviewSession session = new ReviewSession(new Deck().cardsForReview());
         assertTrue(session.isFinished());
         assertNull(session.currentCard());

@@ -65,6 +65,36 @@ class FileDeckDataAccessObjectTest {
     }
 
     @Test
+    void savingMeaningKeepsExistingRatingAndAddsDifferentDefinition() throws IOException {
+        writeDeckFile(TWO_CARDS);
+        final FileDeckDataAccessObject storage = openStorage();
+        final Flashcard original = storage.getDeck().getCards().get(0);
+        final Flashcard repeated = new Flashcard("BOOK", "noun", "A written work.");
+        final Flashcard other = new Flashcard("book", "verb", "To reserve a place.");
+
+        assertSame(original, storage.saveCard(repeated));
+        assertSame(other, storage.saveCard(other));
+        final Deck reopened = openStorage().getDeck();
+        assertEquals(3, reopened.getCards().size());
+        assertEquals(Flashcard.GOT_IT, reopened.getCards().get(0).getLastRating());
+        assertTrue(reopened.getCards().get(2).matchesMeaning(other));
+    }
+
+    @Test
+    void failedSaveCanBeRetriedWithTheSameDeck() throws IOException {
+        final Path parent = folder.resolve("data");
+        final String path = parent.resolve("deck.json").toString();
+        final FileDeckDataAccessObject storage = new FileDeckDataAccessObject(path);
+        final Flashcard word = new Flashcard("leaf", "noun", "A part of a plant.");
+
+        assertThrows(IOException.class, () -> storage.saveCard(word));
+        assertTrue(storage.getDeck().getCards().isEmpty());
+        Files.createDirectory(parent);
+        assertSame(word, storage.saveCard(word));
+        assertTrue(new FileDeckDataAccessObject(path).getDeck().getCards().get(0).matchesMeaning(word));
+    }
+
+    @Test
     void savedRatingIsThereAfterReopeningTheFile() throws IOException {
         writeDeckFile(TWO_CARDS);
         final FileDeckDataAccessObject storage = openStorage();
