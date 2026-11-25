@@ -14,3 +14,6 @@ out/
 .idea/
 *.iml
 .DS_Store
+
+# Deck saved by the app
+deck.json
