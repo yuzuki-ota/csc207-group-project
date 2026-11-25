@@ -16,6 +16,11 @@ import view.LookupView;
 import view.ReviewView;
 
 public class Main {
+    /**
+     * Opens the WordDeck window.
+     *
+     * @param args not used
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override

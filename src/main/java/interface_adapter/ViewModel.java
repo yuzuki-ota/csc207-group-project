@@ -19,10 +19,18 @@ public class ViewModel<T> {
         this.state = state;
     }
 
+    /**
+     * Tells the listeners that the state has changed.
+     */
     public void firePropertyChanged() {
         support.firePropertyChange("state", null, state);
     }
 
+    /**
+     * Adds a listener to be told when the state changes.
+     *
+     * @param listener the listener to add
+     */
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         support.addPropertyChangeListener(listener);
     }

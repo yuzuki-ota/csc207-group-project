@@ -10,14 +10,25 @@ public class ReviewController {
         this.reviewInteractor = reviewInteractor;
     }
 
+    /**
+     * Starts a review of the saved deck.
+     */
     public void startReview() {
         reviewInteractor.startReview();
     }
 
+    /**
+     * Rates the current card.
+     *
+     * @param gotIt true for Got it and false for Again
+     */
     public void rateCard(boolean gotIt) {
         reviewInteractor.rateCard(new ReviewInputData(gotIt));
     }
 
+    /**
+     * Ends the review before the last card.
+     */
     public void endReview() {
         reviewInteractor.endReview();
     }
