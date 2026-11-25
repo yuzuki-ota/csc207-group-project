@@ -76,6 +76,10 @@ The deck is saved as `deck.json` in the folder the app is run from. Cards are ke
 }
 ```
 
+## Design
+
+The packages follow the Clean Architecture layers, from `entity` and `use_case` in the centre to `interface_adapter`, and then `view` and `data_access` on the outside. `app.Main` connects them. [docs/review-design.md](docs/review-design.md) has a class diagram and a sequence diagram for the review use case.
+
 ## Current progress
 
 `Flashcard`, deck insertion and duplicate checks, review ordering, `ReviewSession`, and the lookup interactor are implemented. Reviewing saved words works from the Review tab: it loads `deck.json`, shows one card at a time, saves each rating before moving on, and shows the totals when the deck is finished or the review is ended early.
