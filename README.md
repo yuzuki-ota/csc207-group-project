@@ -83,3 +83,7 @@ The deck is saved as `deck.json` in the folder the app is run from. Cards are ke
 The lookup screen is still a layout only; its buttons are disabled. Its controller, presenter, dictionary API connection, and saving new cards to the deck file are still to do. Until then, copy the sample above into `deck.json` to try a review.
 
 Open `pom.xml` as a Maven project and run `app.Main`. Run `mvn test` to check the entities, both interactors, the review presenter, and the deck file.
+
+## Code style
+
+We check the code with the course's Checkstyle configuration, `mystyle.xml`. Run `mvn checkstyle:check` to list the warnings, or select `mystyle.xml` as the configuration in the CheckStyle-IDEA plugin.
