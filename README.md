@@ -9,7 +9,7 @@ WordDeck is a Java Swing app for learning English vocabulary. A reader can look 
 | Yuzuki Ota | As a reader, I want to save the meaning of a word as it is used in my reading so I can recall it later. | Look up and save a word |
 | Pranav | As a learner, I want to practise words I struggled with first so I can use my study time on them. | Review saved words |
 
-Each lead will implement their use case from its Swing controls through the controller, interactor, and presenter. The two use cases share the deck and its storage interface.
+Both tabs use the same deck file. Each tab has its own controller, interactor, and presenter.
 
 ## Use cases
 
@@ -53,11 +53,13 @@ Each lead will implement their use case from its Swing controls through the cont
 
 ## API usage
 
-The lookup uses the [Free Dictionary API](https://dictionaryapi.dev/). A GET request for the word returns definitions grouped by part of speech. WordDeck will read the response with OkHttp and `org.json`, then save the learner's selected definition. A [browser lookup for *hello*](https://api.dictionaryapi.dev/api/v2/entries/en/hello) returned noun, verb, and interjection entries. Java integration is planned.
+The lookup uses the [Free Dictionary API](https://dictionaryapi.dev/). A GET request for the word returns definitions grouped by part of speech. WordDeck sends the request with OkHttp and reads the definitions with `org.json`. A [lookup for *hello*](https://api.dictionaryapi.dev/api/v2/entries/en/hello) from the Java app returned seven definitions across three parts of speech. Reviewing saved cards works offline.
 
-## Implementation order
+## Run WordDeck
 
-First, agree on the deck file format using one sample card. Yuzuki can then build the lookup and save flow while Pranav builds the review flow using that sample deck. To check that the two flows work together, save two words, restart the app, mark one *Again*, and confirm it appears first in the next review.
+Open `pom.xml` as a Maven project and run `app.Main`. In **Look up**, enter a word, select one of its definitions, and click **Save selected meaning**. Save a second word, then restart the app from the same folder. In **Review**, reveal each definition, mark the first word **Got it** and the second **Again**, then start another review. The second word should appear first.
+
+Run `mvn test` for the automated tests.
 
 ## Deck file
 
@@ -78,15 +80,7 @@ The deck is saved as `deck.json` in the folder the app is run from. Cards are ke
 
 ## Design
 
-The packages follow the Clean Architecture layers, from `entity` and `use_case` in the centre to `interface_adapter`, and then `view` and `data_access` on the outside. `app.Main` connects them. [docs/review-design.md](docs/review-design.md) has a class diagram and a sequence diagram for the review use case.
-
-## Current progress
-
-`Flashcard`, deck insertion and duplicate checks, review ordering, `ReviewSession`, and the lookup interactor are implemented. Reviewing saved words works from the Review tab: it loads `deck.json`, shows one card at a time, saves each rating before moving on, and shows the totals when the deck is finished or the review is ended early.
-
-The lookup screen is still a layout only; its buttons are disabled. Its controller, presenter, dictionary API connection, and saving new cards to the deck file are still to do. Until then, copy the sample above into `deck.json` to try a review.
-
-Open `pom.xml` as a Maven project and run `app.Main`. Run `mvn test` to check the entities, both interactors, the review presenter, and the deck file.
+The packages follow the Clean Architecture layers, from `entity` and `use_case` in the centre to `interface_adapter`, and then `view` and `data_access` on the outside. `app.Main` connects them. The [lookup and save diagrams](docs/lookup-design.md) and [review diagrams](docs/review-design.md) show the classes and a walkthrough for each use case.
 
 ## Code style
 

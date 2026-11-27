@@ -2,9 +2,11 @@ package data_access;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -12,9 +14,10 @@ import org.json.JSONObject;
 
 import entity.Deck;
 import entity.Flashcard;
+import use_case.lookup.LookupDeckDataAccessInterface;
 import use_case.review.ReviewDataAccessInterface;
 
-public class FileDeckDataAccessObject implements ReviewDataAccessInterface {
+public class FileDeckDataAccessObject implements ReviewDataAccessInterface, LookupDeckDataAccessInterface {
     private static final String CARDS = "cards";
     private static final String WORD = "word";
     private static final String PART_OF_SPEECH = "partOfSpeech";
@@ -25,7 +28,7 @@ public class FileDeckDataAccessObject implements ReviewDataAccessInterface {
     private Deck deck;
 
     public FileDeckDataAccessObject(String filePath) {
-        this.file = Paths.get(filePath);
+        this.file = Paths.get(filePath).toAbsolutePath();
     }
 
     @Override
@@ -37,17 +40,34 @@ public class FileDeckDataAccessObject implements ReviewDataAccessInterface {
     }
 
     @Override
+    public Flashcard saveCard(Flashcard card) throws IOException {
+        final Deck currentDeck = getDeck();
+        Flashcard saved = currentDeck.findMeaning(card);
+        if (saved == null) {
+            final JSONArray cards = deckEntries(null, null);
+            cards.put(toJson(card, card.getLastRating()));
+            writeCards(cards);
+            saved = currentDeck.addCard(card);
+        }
+        return saved;
+    }
+
+    @Override
     public void saveRating(Flashcard card, String rating) throws IOException {
+        writeCards(deckEntries(card, rating));
+    }
+
+    private JSONArray deckEntries(Flashcard ratedCard, String rating) throws IOException {
         final JSONArray cards = new JSONArray();
         for (Flashcard savedCard : getDeck().getCards()) {
-            if (savedCard.matchesMeaning(card)) {
+            if (ratedCard != null && savedCard.matchesMeaning(ratedCard)) {
                 cards.put(toJson(savedCard, rating));
             }
             else {
                 cards.put(toJson(savedCard, savedCard.getLastRating()));
             }
         }
-        writeCards(cards);
+        return cards;
     }
 
     private Deck readDeck() throws IOException {
@@ -89,6 +109,18 @@ public class FileDeckDataAccessObject implements ReviewDataAccessInterface {
     private void writeCards(JSONArray cards) throws IOException {
         final JSONObject deckJson = new JSONObject();
         deckJson.put(CARDS, cards);
-        Files.write(file, deckJson.toString(2).getBytes(StandardCharsets.UTF_8));
+        final Path temporary = Files.createTempFile(file.getParent(), "worddeck-", ".tmp");
+        try {
+            Files.write(temporary, deckJson.toString(2).getBytes(StandardCharsets.UTF_8));
+            try {
+                Files.move(temporary, file, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+            }
+            catch (AtomicMoveNotSupportedException exception) {
+                Files.move(temporary, file, StandardCopyOption.REPLACE_EXISTING);
+            }
+        }
+        finally {
+            Files.deleteIfExists(temporary);
+        }
     }
 }
